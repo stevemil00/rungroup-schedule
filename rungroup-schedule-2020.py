@@ -110,9 +110,9 @@ def print_results(rungroups, good_permutations):
     print '\t', '\n\t'.join('%s: %s' % (name, ', '.join(sorted(classes))) for name, classes in rungroups.items())
 
     print '\n'.join('order: %s\n\t# back-to-back double-dippers: %d\n\tgroups with back-to-back double-dippers: %s' % (
-        ', '.join('%d: %s' % (pos + 1, grp) for pos, grp in enumerate(permutation)), score,
-        ', '.join('%s+%s' % (sorted((x, y))[0], sorted((x, y))[1]) for x, y in sorted(overlap))) for
-                    permutation, score, overlap in good_permutations)
+        ', '.join('{pos}: {grp}'.format(pos=pos+1, grp=grp) for pos, grp in enumerate(permutation)), score,
+        ', '.join('{btob1}+{btob2}'.format(btob1=sorted((x, y))[0], btob2=sorted((x, y))[1])
+            for x, y in sorted(overlap))) for permutation, score, overlap in good_permutations)
 
 
 default_marrs = compute_choices(default_rungroups)
