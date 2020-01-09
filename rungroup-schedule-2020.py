@@ -5,16 +5,8 @@ from collections import Counter
 import sys
 
 """
-MARRS 1: 9 groups
-big-ita becomes 2 groups
-    'bigbore': set(['as', 'gta', 'gt1', 'gt2', 'gt3', 'ite', 'spo', 't1', 't2', 'gtx']),
-    'itaplus': set(['ita', 'itr', 'sm5', 't3', 't4', 'stu'])
-
-MARRS 5: 9 groups
-normal 8 groups + enduro
-must end with enduro
-wings must be just before
-bracket should be 2, 4, 6
+Ignores MARRS1 rungroup generation, which is odd because of the other big-bore group.  Easy enough to
+add again here, though, if there's interest.
 """
 
 default_rungroups = {
@@ -23,36 +15,10 @@ default_rungroups = {
     'it': {'itb', 'itc', 'its', 'bspec'},
     'ssm': {'ssm'},
     'srf': {'srf', 'srf3'},
-    'big-ita': {'ita', 'itr', 'sm5', 't3', 't4', 'as', 'gta', 'gt1', 'gt2', 'gt3', 'ite', 'spo', 't1', 't2', 'stu',
-                'gtx'},
+    'bigbore': {'ita', 'itr', 'sm5', 't3', 't4', 'as', 'gta', 'gt1', 'gt2', 'gt3', 'ite', 'spo', 't1', 't2', 'stu',
+                'gtx', 'it7'},
     'smallbore': {'ep', 'fp', 'gtl', 'gtp', 'hp', 'lc', 'spu', 'stl', 'srx7'},
     'bracket': {'srf3', 'ita', 'ssm', 'stl', 'stu', 'itb', 'sm', 'srf', 'srx7'}
-}
-
-marrs1_rungroups = {
-    'wings': {'cf', 'f5', 'fa', 'fb', 'fc', 'fe', 'fe2', 'ff', 'fm', 'fs', 'fst', 'fv', 'p1', 'p2'},
-    'sm': {'sm'},
-    'it': {'itb', 'itc', 'its', 'bspec'},
-    'ssm': {'ssm'},
-    'srf': {'srf', 'srf3'},
-    'bigbore': {'as', 'gta', 'gt1', 'gt2', 'gt3', 'ite', 'spo', 't1', 't2', 'gtx'},
-    'itaplus': {'ita', 'itr', 'sm5', 't3', 't4', 'stu'},
-    'smallbore': {'ep', 'fp', 'gtl', 'gtp', 'hp', 'lc', 'spu', 'stl', 'srx7'},
-    'bracket': {'srf3', 'ita', 'ssm', 'stl', 'stu', 'itb', 'sm', 'srf', 'srx7'}
-}
-
-marrs5_rungroups = {
-    'wings': {'cf', 'f5', 'fa', 'fb', 'fc', 'fe', 'fe2', 'ff', 'fm', 'fs', 'fst', 'fv', 'p1', 'p2'},
-    'sm': {'sm'},
-    'it': {'itb', 'itc', 'its', 'bspec'},
-    'ssm': {'ssm'},
-    'srf': {'srf', 'srf3'},
-    'big-ita': {'ita', 'itr', 'sm5', 't3', 't4', 'as', 'gta', 'gt1', 'gt2', 'gt3', 'ite', 'spo', 't1', 't2', 'stu',
-                'gtx'},
-    'smallbore': {'ep', 'fp', 'gtl', 'gtp', 'hp', 'lc', 'spu', 'stl', 'srx7'},
-    'bracket': {'srf3', 'ita', 'ssm', 'stl', 'stu', 'itb', 'sm', 'srf', 'srx7'},
-    # unknown overlap so it is what it is
-    'enduro': {'enduro'}
 }
 
 
@@ -88,22 +54,28 @@ def marrs5_permutation_selector(permutation):
 
 
 raw_double_dippers = {
-    ('sm', 'stl'): 20,
-    ('ssm', 'ita'): 15,
-    ('ssm', 'sm'): 10,
-    ('its', 'stl'): 3,
-    ('t3', 'stl'): 2,
-    ('ssm', 'stl'): 2,
-    ('sm', 'ita'): 1,
-    ('srf3', 'bracket'): 11,
-    ('ita', 'bracket'): 9,
-    ('ssm', 'bracket'): 7,
-    ('stl', 'bracket'): 6,
-    ('stu', 'bracket'): 4,
-    ('itb', 'bracket'): 2,
+    ('sm', 'stl'): 35,
+    ('stl', 'bracket'): 17,
+    ('fp', 'bracket'): 1,
+    ('srf3', 'bracket'): 16,
+    ('sm', 'ssm'): 10,
+    ('ssm', 'bracket'): 8,
+    ('stu', 'bracket'): 3,
+    ('ite', 'bracket'): 3,
+    ('gt1', 'bracket'): 2,
+    ('ssm', 'ita'): 7,
+    ('fp', 'ita'): 1,
+    ('ep', 'it7'): 1,
+    ('ita', 'stl'): 1,
+    ('t3', 'ep'): 1,
+    ('gtp', 'bspec'): 2,
+    ('itb', 'hp'): 1,
     ('sm', 'bracket'): 2,
-    ('srf', 'bracket'): 2,
-    ('srx7', 'bracket'): 1
+    ('sm', 'srf3'): 1,
+    ('ssm', 'fp'): 1,
+    ('ssm', 'its'): 1,
+    ('itb', 'bracket'): 1,
+    ('sm', 'its'): 1,
 }
 
 
@@ -124,7 +96,6 @@ def compute_choices(rungroups, permutation_selector=default_permutation_selector
         pairs += [(permutation[-1], permutation[0])]
         overlap = [pair for pair in pairs if pair in double_dippers]
         score = sum(double_dippers.get(pair, 0) for pair in overlap)
-        # print pairs, overlap, score
         permutations_and_scores += [(permutation, score, overlap)]
         if len(overlap) == 0:
             print 'satisifies?', permutation, 'overlap', overlap
@@ -137,19 +108,12 @@ def compute_choices(rungroups, permutation_selector=default_permutation_selector
 def print_results(rungroups, good_permutations):
     print 'rungroups:'
     print '\t', '\n\t'.join('%s: %s' % (name, ', '.join(sorted(classes))) for name, classes in rungroups.items())
-    print '\n'.join('order: %s; # double-dippers: %d; double-dipper groups: %s' % (
+
+    print '\n'.join('order: %s\n\t# back-to-back double-dippers: %d\n\tgroups with back-to-back double-dippers: %s' % (
         ', '.join('%d: %s' % (pos + 1, grp) for pos, grp in enumerate(permutation)), score,
         ', '.join('%s+%s' % (sorted((x, y))[0], sorted((x, y))[1]) for x, y in sorted(overlap))) for
                     permutation, score, overlap in good_permutations)
 
-
-marrs1 = compute_choices(marrs1_rungroups, marrs1_permutation_selector)
-print "### MARRS 1 rungroup choices: (%d)" % len(marrs1)
-print_results(marrs1_rungroups, marrs1)
-
-marrs5 = compute_choices(marrs5_rungroups, marrs5_permutation_selector)
-print "### MARRS 5 rungroup choices: (%d)" % len(marrs5)
-print_results(marrs5_rungroups, marrs5)
 
 default_marrs = compute_choices(default_rungroups)
 print "### MARRS default rungroup choices (%d):" % len(default_marrs)
