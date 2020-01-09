@@ -110,7 +110,7 @@ def print_results(rungroups, good_permutations):
     print '\t', '\n\t'.join('rungroup "{name}": {members}'.format(name=name, members=', '.join(sorted(classes)))
                             for name, classes in rungroups.items())
 
-    print '\n'.join('order: %s\n\t# back-to-back double-dippers: %d\n\tgroups with back-to-back double-dippers: %s' % (
+    print '\n'.join('rungroup order: %s\n\t# back-to-back double-dippers: %d\n\tgroups with back-to-back double-dippers: %s' % (
         ', '.join('{pos}: {grp}'.format(pos=pos+1, grp=grp) for pos, grp in enumerate(permutation)), score,
         ', '.join('{btob1}+{btob2}'.format(btob1=sorted((x, y))[0], btob2=sorted((x, y))[1])
             for x, y in sorted(overlap))) for permutation, score, overlap in good_permutations)
