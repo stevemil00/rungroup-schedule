@@ -38,21 +38,6 @@ def default_permutation_selector(permutation):
     return True
 
 
-def marrs1_permutation_selector(permutation):
-    good_bigbore_positions = {2}
-    return any(permutation[position - 1] == 'bigbore'
-               for position in good_bigbore_positions)
-
-
-def marrs5_permutation_selector(permutation):
-    good_bracket_positions = {2, 4, 6}
-    good_wings_position = {8}
-    return (any(permutation[position - 1] == 'bracket'
-                for position in good_bracket_positions)
-            and any(permutation[position - 1] == 'wings' for position in good_wings_position)
-            and permutation[-1] == 'enduro')
-
-
 raw_double_dippers = {
     ('sm', 'stl'): 35,
     ('stl', 'bracket'): 17,
@@ -115,7 +100,11 @@ def print_results(rungroups, good_permutations):
         ', '.join('{btob1}+{btob2}'.format(btob1=sorted((x, y))[0], btob2=sorted((x, y))[1])
             for x, y in sorted(overlap))) for permutation, score, overlap in good_permutations)
 
+def main():
+    default_marrs = compute_choices(default_rungroups)
+    print "### MARRS default rungroup choices (%d):" % len(default_marrs)
+    print_results(default_rungroups, default_marrs)
 
-default_marrs = compute_choices(default_rungroups)
-print "### MARRS default rungroup choices (%d):" % len(default_marrs)
-print_results(default_rungroups, default_marrs)
+
+if __name__== "__main__":
+    main()
