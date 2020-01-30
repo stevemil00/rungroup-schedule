@@ -66,12 +66,11 @@ raw_double_dippers = {
 
 def compute_choices(rungroups, permutation_selector=default_permutation_selector):
     double_dippers = Counter()
-    double_dippers.update(dict(
-        ((findclass(class1, rungroups), findclass(class2, rungroups)), count) for ((class1, class2), count) in
-        raw_double_dippers.items()))
-    double_dippers.update(dict(
-        ((findclass(class2, rungroups), findclass(class1, rungroups)), count) for ((class1, class2), count) in
-        raw_double_dippers.items()))
+
+    for ((class1, class2), count) in raw_double_dippers.items():
+        double_dippers.update({(findclass(class1, rungroups), findclass(class2, rungroups)): count})
+    for ((class1, class2), count) in raw_double_dippers.items():
+        double_dippers.update({(findclass(class2, rungroups), findclass(class1, rungroups)): count})
 
     permutations_and_scores = []
     for permutation in list(permutations(rungroups)):
@@ -82,8 +81,6 @@ def compute_choices(rungroups, permutation_selector=default_permutation_selector
         overlap = [pair for pair in pairs if pair in double_dippers]
         score = sum(double_dippers.get(pair, 0) for pair in overlap)
         permutations_and_scores += [(permutation, score, overlap)]
-        if len(overlap) == 0:
-            print 'satisifies?', permutation, 'overlap', overlap
 
     min_score = min(score for permutation, score, overlap in permutations_and_scores)
     return [(permutation, score, overlap) for permutation, score, overlap in permutations_and_scores if
